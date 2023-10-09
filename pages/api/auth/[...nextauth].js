@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import { wpAuth } from '@/services/wp-auth';
 
 export const authOptions = {
   providers: [
@@ -7,9 +8,8 @@ export const authOptions = {
       name: 'Credentials',
 
       async authorize(credentials, req) {
-        // Añadiremos la lógica después
         // console.log('credentials:server', credentials);
-        return null;
+        return wpAuth(credentials);
       },
     }),
   ],

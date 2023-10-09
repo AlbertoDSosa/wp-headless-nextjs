@@ -2,6 +2,8 @@ import { authOptions } from 'pages/api/auth/[...nextauth]';
 import { getServerSession } from 'next-auth/next';
 import { useSession, signIn, getCsrfToken } from 'next-auth/react';
 
+import { useRouter } from 'next/router';
+
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
 
@@ -23,6 +25,7 @@ export async function getServerSideProps(context) {
 
 export default function Signin({ csrfToken }) {
   const session = useSession();
+  const router = useRouter();
 
   if (session.status === 'loading') {
     return null;
@@ -38,7 +41,10 @@ export default function Signin({ csrfToken }) {
       callbackUrl: '/dashboard',
       redirect: false,
     }).then((res) => {
-      console.log(res);
+      // console.log('credentials:client', res);
+      if (res.ok) {
+        router.push('/dashboard');
+      }
     });
   };
 
