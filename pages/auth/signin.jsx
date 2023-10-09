@@ -1,4 +1,47 @@
-export default function Signin() {
+import { authOptions } from 'pages/api/auth/[...nextauth]';
+import { getServerSession } from 'next-auth/next';
+import { useSession, signIn, getCsrfToken } from 'next-auth/react';
+
+export async function getServerSideProps(context) {
+  const session = await getServerSession(context.req, context.res, authOptions);
+
+  if (session) {
+    return {
+      redirect: {
+        destination: '/dashboard',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      csrfToken: await getCsrfToken(context),
+    },
+  };
+}
+
+export default function Signin({ csrfToken }) {
+  const session = useSession();
+
+  if (session.status === 'loading') {
+    return null;
+  }
+
+  const handleSingIn = (event) => {
+    event.preventDefault();
+    const { email, password } = event.target;
+    signIn('credentials', {
+      redirect: true,
+      email: email.value,
+      password: password.value,
+      callbackUrl: '/dashboard',
+      redirect: false,
+    }).then((res) => {
+      console.log(res);
+    });
+  };
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -14,7 +57,9 @@ export default function Signin() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action="#" method="POST">
+          <form onSubmit={handleSingIn} className="space-y-6" method="POST">
+            <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
+
             <div>
               <label
                 htmlFor="email"
