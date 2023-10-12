@@ -1,6 +1,6 @@
 import { authOptions } from 'pages/api/auth/[...nextauth]';
 import { getServerSession } from 'next-auth/next';
-import { useSession, signIn, getCsrfToken } from 'next-auth/react';
+import { signIn, getCsrfToken } from 'next-auth/react';
 
 import { useRouter } from 'next/router';
 
@@ -24,18 +24,13 @@ export async function getServerSideProps(context) {
 }
 
 export default function Signin({ csrfToken }) {
-  const session = useSession();
   const router = useRouter();
-
-  if (session.status === 'loading') {
-    return null;
-  }
 
   const handleSingIn = (event) => {
     event.preventDefault();
     const { email, password } = event.target;
+
     signIn('credentials', {
-      redirect: true,
       email: email.value,
       password: password.value,
       callbackUrl: '/dashboard',
