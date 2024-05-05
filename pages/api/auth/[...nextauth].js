@@ -7,9 +7,9 @@ export const authOptions = {
     CredentialsProvider({
       name: 'Credentials',
 
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         // console.log('credentials:server', credentials);
-        return wpAuth(credentials);
+        return await wpAuth(credentials);
       },
     }),
   ],
